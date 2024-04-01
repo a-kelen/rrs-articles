@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./ui:/app
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./server:/api
+    environment:
+      - DATABASE_URL=mongodb://mongodb:27017/rss_articles
+      - CLIENT_URL=http://localhost:8080
+    depends_on:
+      - database
+
+  database:
+      image: mongo:6.0
+      container_name: mongodb
+      restart: always
+      ports:
+        - '27017:27017'      
+
+  
